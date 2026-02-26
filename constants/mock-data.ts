@@ -30,4 +30,6 @@ export const RECOMMENDED_LISTINGS: ListingProps[] = [
       "ระบบ Access Card เข้า-ออกอาคาร"
     ]
   }
+  
 ];
+

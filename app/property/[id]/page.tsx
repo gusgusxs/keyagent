@@ -7,7 +7,7 @@ import { RECOMMENDED_LISTINGS } from "@/constants/mock-data";
 import { ImageGallery } from "@/components/ImageGallery";
 
 export default async function PropertyDetail({ params }: { params: Promise<{ id: string }> }) {
-  
+
   // 1. รอรับค่า params และดึงข้อมูล
   const resolvedParams = await params;
   const currentId = resolvedParams.id;
@@ -33,9 +33,9 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
   return (
     <div className="min-h-screen bg-white pb-20">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8 max-w-5xl">
-        
+
         {/* 1. Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
           <Link href="/" className="hover:text-gray-900 transition-colors">หน้าแรก</Link>
@@ -107,7 +107,7 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
             <div className="w-1.5 h-7 bg-red-600 rounded-full"></div>
             <h2 className="text-xl font-bold text-gray-900">สิ่งอำนวยความสะดวก & จุดเด่น</h2>
           </div>
-          
+
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12 px-2">
             {(property.features || [
               "โครงการใหม่ สภาพมือหนึ่ง",
@@ -122,18 +122,18 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
           </ul>
         </div>
 
-        {/* 7. ทำเลที่ตั้ง (Map Placeholder) */}
-        <div>
+        {/* 7. ทำเลที่ตั้ง */}
+        <div className="mt-12">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-1.5 h-7 bg-red-600 rounded-full"></div>
+            {/* เส้นสีแดงข้างหัวข้อ */}
+            <div className="w-1.5 h-7 bg-[#a51c24] rounded-full"></div>
             <h2 className="text-xl font-bold text-gray-900">ทำเลที่ตั้ง</h2>
           </div>
-          
-          <div className="w-full h-[400px] bg-gray-50 border border-gray-200 rounded-3xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
-            <MapPin className="w-10 h-10 text-red-600 mb-3" />
-            <div className="font-bold text-gray-900 text-lg mb-1">{property.location}</div>
-            <div className="text-sm">แผนที่กำลังโหลด...</div>
+
+          <div className="w-full h-[450px] bg-gray-100 rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 relative group">
+            <iframe allowFullScreen width="100%" height="100%" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3876.7633826846168!2d100.45440059678955!3d13.672146900000007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e2a3d97c5f5f45%3A0xa7970a9bc34018e5!2z4Lie4Lil4Lix4LihIOC4hOC4reC4meC5guC4lCDguJ7guKPguLDguKPguLLguKEgMg!5e0!3m2!1sth!2sth!4v1772097843365!5m2!1sth!2sth" loading="lazy" ></iframe>
           </div>
+
         </div>
 
       </main>

@@ -1,7 +1,7 @@
-"use client"; // 🌟 สำคัญมาก: ต้องมีบรรทัดนี้บนสุด เพราะเราใช้ useState เพื่อทำสไลด์
+"use client";
 
 import { useState } from 'react';
-import { Heart, EyeOff, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, EyeOff, CheckCircle2, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { ListingProps } from '@/types/property';
 
@@ -11,82 +11,97 @@ export function ListingCard({
   price,
   location,
   specs,
-  images,
+  images = [], // ใส่ค่าเริ่มต้นเป็น Array ว่างเพื่อกันพัง
   verified = false,
   pricePerSqm
 }: ListingProps) {
-  // 🌟 State เก็บตำแหน่งของรูปภาพปัจจุบัน (เริ่มต้นที่ 0 คือรูปแรก)
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ฟังก์ชันเลื่อนไปรูปถัดไป
+  // ฟังก์ชันเช็กว่ามีรูปไหม
+  const hasImages = images && images.length > 0;
+  const isMultiImage = images && images.length > 1;
+
   const nextImage = (e: React.MouseEvent) => {
-    e.preventDefault(); // ป้องกันไม่ให้คลิกปุ่มแล้วเด้งเปลี่ยนหน้า
+    e.preventDefault();
+    e.stopPropagation();
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  // ฟังก์ชันย้อนกลับรูปก่อนหน้า
   const prevImage = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
-  // ฟังก์ชันกดเลือกจุดไข่ปลา
   const goToImage = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
+    e.stopPropagation();
     setCurrentIndex(index);
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-4 group/card hover:shadow-lg transition-all duration-300">
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-4 group/card hover:shadow-xl transition-all duration-500">
+      
       {/* Image Container */}
-      <div className="relative aspect-[4/3] bg-gray-100 group">
-        <Link href={`/property/${id}`} className="block w-full h-full relative overflow-hidden">
-          {/* 🌟 แสดงรูปภาพตาม currentIndex */}
-          <img
-            src={images[currentIndex]}
-            alt={`${title} - image ${currentIndex + 1}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+        <Link href={`/property/${id}`} className="block w-full h-full relative">
+          {hasImages ? (
+            <img
+              src={images[currentIndex]}
+              alt={`${title} - image ${currentIndex + 1}`}
+              className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700 ease-in-out"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">ไม่มีรูปภาพ</div>
+          )}
+          
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
         </Link>
 
-        {/* 🌟 ปุ่มเลื่อนซ้าย-ขวา (จะโชว์เฉพาะเวลามีรูปมากกว่า 1 รูป และเอาเมาส์ชี้ไปที่รูป) */}
-        {images && images.length > 1 && (
-          <>
+        {/* 🌟 ปุ่มเลื่อนซ้าย-ขวา (ปรับขนาดให้กดง่ายขึ้นแต่ดูละมุนขึ้น) */}
+        {isMultiImage && (
+          <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 flex justify-between items-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 z-10">
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-white/80 rounded-full hover:bg-white text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm z-10"
+              className="p-2 bg-white/90 rounded-full hover:bg-white text-gray-900 shadow-lg backdrop-blur-sm transition-all active:scale-90"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-white/80 rounded-full hover:bg-white text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm z-10"
+              className="p-2 bg-white/90 rounded-full hover:bg-white text-gray-900 shadow-lg backdrop-blur-sm transition-all active:scale-90"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
-          </>
+          </div>
         )}
 
-        {/* Overlay Icons */}
-        <div className="absolute top-3 right-3 flex gap-2">
-          <button className="p-1.5 bg-black/30 rounded-full hover:bg-black/50 backdrop-blur-sm z-10">
-            <EyeOff className="h-4 w-4 text-white" />
-          </button>
-          <button className="p-1.5 bg-black/30 rounded-full hover:bg-black/50 backdrop-blur-sm z-10">
+        {/* Badges & Icons */}
+        <div className="absolute top-4 left-4 z-10">
+          {verified && (
+            <div className="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+              <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+              <span className="text-[10px] font-bold text-gray-800 uppercase tracking-wider">Verified</span>
+            </div>
+          )}
+        </div>
+
+        <div className="absolute top-4 right-4 flex gap-2 z-10">
+          <button className="p-2 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full transition-colors">
             <Heart className="h-4 w-4 text-white" />
           </button>
         </div>
 
-        {/* 🌟 จุดไข่ปลา (Carousel Dots) */}
-        {images && images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+        {/* 🌟 จุดไข่ปลา (Dots Indicator) - ปรับให้นิ่งขึ้นและสวยขึ้น */}
+        {isMultiImage && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
             {images.map((_, i) => (
               <button
                 key={i}
                 onClick={(e) => goToImage(e, i)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === currentIndex ? 'bg-white w-4' : 'bg-white/50 w-1.5 hover:bg-white/80'
+                  i === currentIndex ? 'bg-white w-5' : 'bg-white/50 w-1.5 hover:bg-white/80'
                 }`}
               />
             ))}
@@ -94,26 +109,40 @@ export function ListingCard({
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-5">
-        <div className="flex items-baseline gap-2 mb-2">
-          <h3 className="text-xl font-black text-[#a51c24]">{price} <span className="text-xs font-normal text-gray-500">/เดือน</span></h3>
-          <span className="text-xs text-gray-400">{pricePerSqm}</span>
+      {/* Content Section */}
+      <div className="p-6">
+        <div className="mb-3">
+          <span className="text-2xl font-black text-[#a51c24] tracking-tight">{price}</span>
+          <span className="text-sm font-medium text-gray-400 ml-1">/เดือน</span>
         </div>
 
         <Link href={`/property/${id}`}>
-          <h4 className="font-bold text-gray-900 mb-1 hover:text-[#a51c24] transition-colors line-clamp-1">{title}</h4>
+          <h4 className="font-bold text-gray-900 text-lg mb-1 hover:text-[#a51c24] transition-colors line-clamp-1">
+            {title}
+          </h4>
         </Link>
-        <p className="text-sm font-medium text-gray-500 mb-3 line-clamp-1">{location}</p>
 
-        <div className="text-sm text-gray-600 mb-4">
-          <span className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600">
+        <div className="flex items-center gap-1 text-gray-500 mb-4">
+          <MapPin className="w-3.5 h-3.5 text-gray-400" />
+          <p className="text-sm font-medium line-clamp-1">{location}</p>
+        </div>
+
+        {/* Specs Tags */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <span className="bg-red-50 text-[#a51c24] px-3 py-1 rounded-lg text-[11px] font-bold border border-red-100/50">
             {specs}
+          </span>
+          <span className="bg-gray-50 text-gray-500 px-3 py-1 rounded-lg text-[11px] font-bold border border-gray-100">
+            {pricePerSqm}
           </span>
         </div>
 
-        <Link href={`/property/${id}`} className="w-full py-2.5 rounded-xl border border-gray-200 font-bold text-sm hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center gap-2 text-gray-700 transition-all shadow-sm">
-          รายละเอียด
+        {/* Action Button */}
+        <Link 
+          href={`/property/${id}`} 
+          className="w-full py-3.5 rounded-2xl bg-gray-900 text-white font-bold text-sm hover:bg-[#a51c24] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-gray-200 hover:shadow-red-100"
+        >
+          ดูรายละเอียดโครงการ
         </Link>
       </div>
     </div>
